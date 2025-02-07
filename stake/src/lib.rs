@@ -6,10 +6,11 @@ mod client;
 mod create;
 mod delegate;
 mod withdrawal;
-use std::fmt::{Debug, Display, Formatter};
-use wasm_client_solana::SolanaRpcClient;
-
 pub use account::*;
+use {
+    std::fmt::{Debug, Display, Formatter},
+    wasm_client_solana::SolanaRpcClient,
+};
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Clone)]
@@ -36,6 +37,7 @@ impl StakeClient {
             rpc: rpc.clone(),
         }
     }
+
     pub async fn minimum_delegation(&self) -> Result<u64> {
         Ok(self.rpc.get_stake_minimum_delegation().await?)
     }

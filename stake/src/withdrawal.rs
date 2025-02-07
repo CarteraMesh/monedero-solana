@@ -8,6 +8,7 @@ impl StakeClient {
     pub fn deactivate(&self, account: &Pubkey) -> Instruction {
         stake_instruction::deactivate_stake(account, &self.owner)
     }
+
     pub fn withdraw(&self, account: &Pubkey, lamports: u64) -> Instruction {
         stake_instruction::withdraw(account, &self.owner, &self.owner, lamports, None)
     }

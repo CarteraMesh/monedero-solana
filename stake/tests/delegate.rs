@@ -1,7 +1,9 @@
 mod setup;
 
-use setup::{config, TestConfig};
-use solana_sdk::{native_token::sol_to_lamports, signature::Keypair, signer::Signer};
+use {
+    setup::{config, TestConfig},
+    solana_sdk::{native_token::sol_to_lamports, signature::Keypair, signer::Signer},
+};
 
 #[tokio::test]
 #[rstest::rstest]

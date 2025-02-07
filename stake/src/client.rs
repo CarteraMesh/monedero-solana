@@ -16,7 +16,10 @@ use {
     wasm_client_solana::{
         rpc_filter::{Memcmp, RpcFilterType},
         rpc_response::RpcVoteAccountInfo,
-        solana_account_decoder, RpcAccountInfoConfig, RpcProgramAccountsConfig, SolanaRpcClient,
+        solana_account_decoder,
+        RpcAccountInfoConfig,
+        RpcProgramAccountsConfig,
+        SolanaRpcClient,
     },
 };
 

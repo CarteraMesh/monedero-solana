@@ -48,6 +48,7 @@ impl StakeClient {
         sanity_check_result?;
         Ok(())
     }
+
     pub async fn delegate(
         &self,
         stake_account: &Pubkey,
@@ -60,6 +61,7 @@ impl StakeClient {
             vote_account,
         )])
     }
+
     pub async fn create_delegate(
         &self,
         stake_pubkey: &Pubkey,

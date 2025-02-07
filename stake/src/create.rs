@@ -1,7 +1,8 @@
 use {
     crate::{
         Error::{AccountExists, BadParameter, MinimumDelegation},
-        Result, StakeClient,
+        Result,
+        StakeClient,
     },
     solana_program::{
         instruction::Instruction,

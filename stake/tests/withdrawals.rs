@@ -1,9 +1,10 @@
 mod setup;
 
-use setup::{config, TestConfig};
-use solana_pubkey::Pubkey;
-
-use monedero_solana_stake::{KeyedStakeState, StakeState};
+use {
+    monedero_solana_stake::{KeyedStakeState, StakeState},
+    setup::{config, TestConfig},
+    solana_pubkey::Pubkey,
+};
 #[rstest::rstest]
 fn accounts(config: TestConfig) -> anyhow::Result<()> {
     let c = &config.client;
