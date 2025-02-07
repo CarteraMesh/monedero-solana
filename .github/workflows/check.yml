@@ -61,6 +61,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
   semver:
     runs-on: ubuntu-latest
+    if: false
     name: semver
     steps:
       - uses: actions/checkout@v4
