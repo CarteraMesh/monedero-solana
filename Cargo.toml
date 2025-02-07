@@ -9,9 +9,9 @@ license = "MIT"
 resolver = "2"
 members = [
   # "instructor", 
-  "signer",
+  "signer", "test-utils",
   # "stake",
-  # "tokens",
+  "tokens",
   # "wallet",
 ]
 
