@@ -11,14 +11,14 @@ use {
     wasm_client_solana::{SolanaRpcClient, VersionedTransactionExtension},
 };
 
-/// KeyPairSender is used for testing.
-pub struct KeyPairSender {
+/// KeypairSender is used for testing.
+pub struct KeypairSender {
     pk: Pubkey,
     kp: Vec<u8>,
     rpc: SolanaRpcClient,
 }
 
-impl KeyPairSender {
+impl KeypairSender {
     pub fn new(kp: Vec<u8>, rpc: &SolanaRpcClient) -> Result<Self, SignerError> {
         let pk = Keypair::from_bytes(&kp)
             .map_err(|e| SignerError::Custom(e.to_string()))?
@@ -32,7 +32,7 @@ impl KeyPairSender {
 }
 
 #[async_trait(?Send)]
-impl TransactionSignerSender for KeyPairSender {
+impl TransactionSignerSender for KeypairSender {
     fn pubkey(&self) -> Pubkey {
         self.pk
     }

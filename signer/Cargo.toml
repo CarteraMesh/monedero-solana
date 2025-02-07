@@ -6,6 +6,9 @@ authors.workspace = true
 repository.workspace = true
 license.workspace = true
 
+[lints]
+workspace = true
+
 [dependencies]
 async-trait = { workspace = true }
 solana-signature = { workspace = true }
@@ -19,5 +22,5 @@ wasm_client_solana = { version = "0.7", features = ["ssr", "zstd"]}
 wasm_client_solana = { version = "0.7", features = ["js"]}
 
 
-[lints]
-workspace = true
+[dev-dependencies]
+anyhow = { workspace = true }
