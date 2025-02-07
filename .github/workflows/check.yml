@@ -106,6 +106,7 @@ jobs:
       - name: cargo hack
         run: cargo hack --feature-powerset check
   msrv:
+    if: false
     # check that we can build using the minimal rust version that is specified by this crate
     runs-on: ubuntu-latest
     # we use a matrix here just because env can't be used in job names

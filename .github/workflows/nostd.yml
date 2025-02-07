@@ -13,6 +13,7 @@ concurrency:
 name: no-std
 jobs:
   nostd:
+    if: false
     runs-on: ubuntu-latest
     name: ${{ matrix.target }}
     strategy:

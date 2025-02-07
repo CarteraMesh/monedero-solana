@@ -1,8 +1,9 @@
-use async_trait::async_trait;
-use solana_pubkey::Pubkey;
-pub use solana_sdk::signer::SignerError;
-use solana_sdk::transaction::VersionedTransaction;
-pub use solana_signature::Signature;
+use {
+    async_trait::async_trait,
+    solana_pubkey::Pubkey,
+    solana_sdk::transaction::VersionedTransaction,
+};
+pub use {solana_sdk::signer::SignerError, solana_signature::Signature};
 
 mod kp;
 
