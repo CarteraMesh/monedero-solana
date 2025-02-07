@@ -82,7 +82,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix: 
-        project: ["monedero-signer-sender"]
+        project: ["monedero-signer-sender", "monedero-solana-tokens"]
     steps:
       - uses: actions/checkout@v4
         with:
