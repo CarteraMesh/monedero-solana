@@ -9,8 +9,19 @@ mod kp;
 
 pub use kp::KeypairSender;
 
-#[async_trait(?Send)]
-pub trait TransactionSignerSender {
+// #[cfg(target_family = "wasm")]
+// #[async_trait(?Send)]
+// pub trait TransactionSignerSender {
+// fn pubkey(&self) -> Pubkey;
+// async fn sign_and_send(
+// &self,
+// tx: &mut VersionedTransaction,
+// ) -> std::result::Result<Signature, SignerError>;
+// }
+
+#[cfg(not(target_family = "wasm"))]
+#[async_trait]
+pub trait TransactionSignerSender: Sync {
     fn pubkey(&self) -> Pubkey;
     async fn sign_and_send(
         &self,
