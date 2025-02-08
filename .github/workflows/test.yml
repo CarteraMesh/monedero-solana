@@ -16,8 +16,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 name: test
-# env:
-  # RPC_URL: ${{ secrets.DEV_RPC_URL }}
+env:
+  IGNORED_RPC_URL: ${{ secrets.RPC_URL }}
 jobs:
   required:
     runs-on: ubuntu-latest
@@ -109,7 +109,7 @@ jobs:
         if: hashFiles('Cargo.lock') == ''
         run: cargo generate-lockfile
       - name: cargo test
-        run: cargo test --locked --all-features --all-targets
+        run: RPC_URL="https://api.devnet.solana.com" cargo test --locked --all-features --all-targets
   coverage:
     # use llvm-cov to build and collect coverage and outputs in a format that
     # is compatible with codecov.io
