@@ -8,7 +8,7 @@ license = "MIT"
 [workspace]
 resolver = "2"
 members = [
-  # "instructor", 
+  "instructor",
   "signer", 
   "test-utils",
   "stake",
