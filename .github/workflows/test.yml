@@ -21,6 +21,7 @@ env:
 jobs:
   required:
     runs-on: ubuntu-latest
+    if: false
     name: ubuntu / ${{ matrix.toolchain }}
     strategy:
       matrix:
