@@ -1,0 +1,73 @@
+[package]
+name = "monedero-solana"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+
+[dependencies]
+async-trait = { workspace = true }
+base64 = { workspace = true }
+bincode = { workspace = true }
+chrono = { workspace = true }
+derive_more = { workspace = true }
+futures = { workspace = true }
+monedero-solana-instructor = { path = "../instructor", version = "0.1.0" }
+monedero-signer-sender = { path = "../signer/", version = "0.1.0"}
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_with = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+trait-variant = { workspace = true }
+
+solana-account = { workspace = true }
+solana-compute-budget = { workspace = true }
+solana-program = { workspace = true }
+solana-pubkey = { workspace = true }
+solana-sdk = { workspace = true }
+solana-signature = { workspace = true }
+solana-signer = { workspace = true }
+spl-associated-token-account= { workspace = true }
+spl-associated-token-account-client = { workspace = true }
+spl-memo = { workspace = true }
+spl-token= { workspace = true}
+spl-token-2022 = { workspace = true}
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+wasm_client_solana = { version = "0.7", features = ["ssr", "zstd"]}
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm_client_solana = { version = "0.7", features = ["js"]}
+
+
+[dev-dependencies]
+anyhow = "1"
+dotenvy = { workspace = true }
+tracing-subscriber = { workspace = true }
+tokio = { workspace = true , features = ["full"]}
+rstest = { workspace = true }
+test-utils = { path = "../test-utils" }
+
+[[test]]
+name = "memo"
+
+[[test]]
+name = "token_transfer"
+#
+[[test]]
+name = "burn_token"
+
+[[test]]
+name = "stake"
+
+[[test]]
+name = "lookup"
+#
+# [[test]]
+# name = "transfer"

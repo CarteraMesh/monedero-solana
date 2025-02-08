@@ -84,7 +84,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-        project: ["monedero-signer-sender", "monedero-solana-tokens", "monedero-solana-stake", "monedero-solana-instructor"]
+        project: ["monedero-signer-sender", "monedero-solana-tokens", "monedero-solana-stake", "monedero-solana-instructor", "monedero-solana"]
     steps:
       - uses: actions/checkout@v4
         with:
