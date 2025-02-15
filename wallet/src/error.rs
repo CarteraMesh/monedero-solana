@@ -89,6 +89,9 @@ pub enum Error {
     #[error("Lookup table address not foud {0}")]
     LookupTableNotFound(solana_pubkey::Pubkey),
 
+    #[error("Decode error for lookup table {0}")]
+    LookupTableDecodeError(String),
+
     #[error(transparent)]
     StakeError(#[from] monedero_solana_instructor::stake::Error),
 }

@@ -6,7 +6,7 @@ use {
 };
 
 #[allow(dead_code)]
-const LOOKUP: Pubkey = Pubkey::from_str_const("4VdGS3365Jqa2WGRUVpnSkpTVvzgHECdVYtbysSsEzj1");
+pub const LOOKUP: Pubkey = Pubkey::from_str_const("4VdGS3365Jqa2WGRUVpnSkpTVvzgHECdVYtbysSsEzj1");
 #[allow(dead_code)]
 pub const TO: Pubkey = Pubkey::from_str_const("E4SfgGV2v9GLYsEkCQhrrnFbBcYmAiUZZbJ7swKGzZHJ");
 

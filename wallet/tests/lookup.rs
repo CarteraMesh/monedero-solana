@@ -1,10 +1,16 @@
 mod setup;
 use {
-    monedero_solana::{sol_to_lamports, RpcClient, Signature, SolanaWallet, VersionedTransaction},
+    monedero_solana::{sol_to_lamports, RpcClient, Signature, VersionedTransaction},
     setup::{config, TestConfig},
-    solana_sdk::{commitment_config::CommitmentConfig, signature::Keypair, signer::Signer},
+    solana_sdk::{
+        address_lookup_table::state::LookupTableStatus,
+        commitment_config::CommitmentConfig,
+        signature::Keypair,
+        signer::Signer,
+        sysvar::slot_hashes::{id as slot_hashes_id, SlotHashes},
+    },
     std::time::Duration,
-    wasm_client_solana::VersionedTransactionExtension,
+    wasm_client_solana::{SolanaRpcClient, VersionedTransactionExtension},
 };
 
 #[allow(clippy::missing_panics_doc)]
@@ -44,30 +50,75 @@ async fn lookup_list(#[future] config: TestConfig) -> anyhow::Result<()> {
     let wallet = &config.wallet;
     let lookups = wallet.lookup_tables().await?;
     assert!(!lookups.is_empty());
+    // for (address, state) in lookups {
+    //    tracing::info!("{address} {state:#?}");
+    //}
+    Ok(())
+}
+
+async fn slot_hashes(rpc: &SolanaRpcClient) -> anyhow::Result<(u64, SlotHashes)> {
+    let slot = rpc.get_slot().await?;
+    let account_data = rpc.get_account_data(&slot_hashes_id()).await?;
+    let slot_hashes: SlotHashes = bincode::deserialize(&account_data)?;
+
+    Ok((slot, slot_hashes))
+}
+
+#[tokio::test]
+#[rstest::rstest]
+async fn lookup_close(#[future] config: TestConfig) -> anyhow::Result<()> {
+    let config = config.await;
+    let wallet = &config.wallet;
+    let lookups = wallet.lookup_tables().await?;
+    let rpc = &config.rpc;
+    let (slot, slot_hashes) = slot_hashes(rpc).await?;
+    assert!(!lookups.is_empty());
+    let to_close = lookups.into_iter().find(|t| {
+        t.0 != setup::LOOKUP
+            && t.1.meta.status(slot, &slot_hashes) == LookupTableStatus::Deactivated
+    });
+    if to_close.is_none() {
+        tracing::warn!("no lookup tables to close");
+        return Ok(());
+    }
+    let to_close = to_close.unwrap().0;
+    wallet.lookup_close(&to_close).await?;
     Ok(())
 }
 
 #[tokio::test]
 #[rstest::rstest]
-async fn lookup_tests(#[future] config: TestConfig) -> anyhow::Result<()> {
+async fn lookup_deactivate(#[future] config: TestConfig) -> anyhow::Result<()> {
+    let config = config.await;
+    let wallet = &config.wallet;
+    let lookups = wallet.lookup_tables().await?;
+    let rpc = &config.rpc;
+    let (slot, slot_hashes) = slot_hashes(rpc).await?;
+    assert!(!lookups.is_empty());
+    let to_deactivate = lookups.into_iter().find(|t| {
+        t.0 != setup::LOOKUP && t.1.meta.status(slot, &slot_hashes) == LookupTableStatus::Activated
+    });
+    if to_deactivate.is_none() {
+        tracing::warn!("no lookup tables to deactivate");
+        return Ok(());
+    }
+    let (address, _state) = to_deactivate.unwrap();
+    let sig = wallet.lookup_deactivate(&address).await?;
+    TestConfig::explorer(sig);
+    Ok(())
+}
+
+#[tokio::test]
+#[rstest::rstest]
+async fn lookup_create(#[future] config: TestConfig) -> anyhow::Result<()> {
     let config = config.await;
     let rpc = &config.rpc;
-    let kp = Keypair::new();
-    let payer = Keypair::from_bytes(&test_utils::KEYPAIR)?;
-    create_account(rpc, &kp, &payer).await?;
-    tracing::info!("new solana wallet created {}", kp.pubkey());
-    rpc.wait_for_new_block(1).await?;
-    tokio::time::sleep(Duration::from_secs(30)).await;
-    let new_wallet = SolanaWallet::new(test_utils::keypair_sender(Some(rpc.clone())), rpc);
-    let (account, sig) = new_wallet.lookup_create().await?;
+    let wallet = &config.wallet;
+    let (account, sig) = wallet.lookup_create().await?;
     tracing::info!("lookup table created: {}", account);
     TestConfig::explorer(sig);
-
-    new_wallet
-        .lookup_extend(account, vec![payer.pubkey(), spl_token::id()])
-        .await?;
-
-    let lookups = new_wallet.lookup_tables().await?;
-    assert!(!lookups.is_empty());
+    rpc.wait_for_new_block(4).await?;
+    tokio::time::sleep(Duration::from_secs(30)).await;
+    wallet.lookup_extend(account, vec![spl_token::id()]).await?;
     Ok(())
 }
