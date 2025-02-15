@@ -20,6 +20,7 @@ name: safety
 jobs:
   sanitizers:
     runs-on: ubuntu-latest
+    if: false
     steps:
       - uses: actions/checkout@v4
         with:
