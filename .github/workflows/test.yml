@@ -17,7 +17,8 @@ concurrency:
   cancel-in-progress: true
 name: test
 env:
-  IGNORED_RPC_URL: ${{ secrets.RPC_URL }}
+  RPC_URL: ${{ secrets.RPC_URL }}
+  RUST_LOG: "info"
 jobs:
   required:
     runs-on: ubuntu-latest
