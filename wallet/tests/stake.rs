@@ -15,7 +15,7 @@ async fn stake_deactivate(#[future] config: TestConfig) -> anyhow::Result<()> {
         .stake_accounts()
         .await?
         .into_iter()
-        .find(|s| s.stake_state.deactivating_stake == 0);
+        .find(|s| s.stake_state.deactivating_stake == 0 && s.stake_state.active_stake > 0);
     assert!(account.is_some());
     let account = account.unwrap();
     TestConfig::explorer(w.stake_deactivate(&account).await?);
