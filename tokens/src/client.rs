@@ -56,7 +56,8 @@ impl TokenClient {
     }
 
     fn fmt_common(&self) -> String {
-        format!("{} [{}]", self.owner, self.host)
+        // format!("{} [{}]", self.owner, self.host)
+        format!("[{}]", self.owner)
     }
 
     #[tracing::instrument(level = "info")]

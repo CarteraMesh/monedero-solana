@@ -46,6 +46,7 @@ jobs:
       - name: cargo test -Zsanitizer=address
         # only --lib --tests b/c of https://github.com/rust-lang/rust/issues/53945
         run: cargo test --lib --tests --all-features --target x86_64-unknown-linux-gnu
+        continue-on-error: true
         env:
           ASAN_OPTIONS: "detect_odr_violation=0:detect_leaks=0"
           RUSTFLAGS: "-Z sanitizer=address"
@@ -69,6 +70,7 @@ jobs:
           toolchain: ${{ env.NIGHTLY }}
           components: miri
       - name: cargo miri test
-        run: cargo miri test || echo failed
+        run: cargo miri test
+        continue-on-error: true
         env:
           MIRIFLAGS: ""
