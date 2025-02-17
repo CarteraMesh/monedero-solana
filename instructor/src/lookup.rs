@@ -42,4 +42,21 @@ impl Instructor {
             accounts,
         )
     }
+
+    pub fn lookup_table_deactivate(&self, lookup_table_address: &Pubkey) -> Instruction {
+        let payer = *self.payer();
+        solana_sdk::address_lookup_table::instruction::deactivate_lookup_table(
+            *lookup_table_address,
+            payer,
+        )
+    }
+
+    pub fn lookup_table_close(&self, lookup_table_address: &Pubkey) -> Instruction {
+        let payer = *self.payer();
+        solana_sdk::address_lookup_table::instruction::close_lookup_table(
+            *lookup_table_address,
+            payer,
+            payer,
+        )
+    }
 }

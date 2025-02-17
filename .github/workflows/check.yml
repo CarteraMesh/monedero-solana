@@ -19,6 +19,10 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
+env:
+  RPC_URL: ${{ secrets.RPC_URL }}
+  RUST_LOG: "info"
+
 name: check
 jobs:
   fmt:
@@ -84,7 +88,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-        project: ["monedero-signer-sender", "monedero-solana-tokens", "monedero-solana-stake", "monedero-solana-instructor"]
+        project: ["monedero-signer-sender", "monedero-solana-tokens", "monedero-solana-stake", "monedero-solana-instructor", "monedero-solana"]
     steps:
       - uses: actions/checkout@v4
         with:

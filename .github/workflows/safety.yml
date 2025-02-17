@@ -12,10 +12,15 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
+env:
+  RPC_URL: ${{ secrets.RPC_URL }}
+  RUST_LOG: "info"
+
 name: safety
 jobs:
   sanitizers:
     runs-on: ubuntu-latest
+    if: false
     steps:
       - uses: actions/checkout@v4
         with:

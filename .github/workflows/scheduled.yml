@@ -4,15 +4,16 @@
 permissions:
   contents: read
 on:
-  push:
-    branches: [main]
-  pull_request:
   schedule:
     - cron:  '7 7 * * *'
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 name: rolling
+env:
+  RPC_URL: ${{ secrets.RPC_URL }}
+  RUST_LOG: "info"
+
 jobs:
   # https://twitter.com/mycoliza/status/1571295690063753218
   nightly:
@@ -37,6 +38,7 @@ jobs:
     # Cargo semver rules (i.e cargo does not update to a new major version unless explicitly told
     # to).
     runs-on: ubuntu-latest
+    needs: "nightly"
     name: ubuntu / beta / updated
     # There's no point running this if no Cargo.lock was checked in in the first place, since we'd
     # just redo what happened in the regular test job. Unfortunately, hashFiles only works in if on
