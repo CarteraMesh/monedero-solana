@@ -6,6 +6,10 @@ authors.workspace = true
 repository.workspace = true
 license.workspace = true
 
+[package.metadata.release]
+sign-commit = true
+push-remote = "origin"
+
 [dependencies]
 borsh = { workspace = true }
 monedero-solana-tokens = { path = "../tokens/"}

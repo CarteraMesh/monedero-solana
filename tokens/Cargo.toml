@@ -6,6 +6,10 @@ authors.workspace = true
 repository.workspace = true
 license.workspace = true
 
+[package.metadata.release]
+sign-commit = true
+push-remote = "origin"
+
 [dependencies]
 serde = { workspace = true }
 serde_json = { workspace = true }
