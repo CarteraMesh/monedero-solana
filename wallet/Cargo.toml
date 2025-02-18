@@ -5,6 +5,10 @@ edition.workspace = true
 authors.workspace = true
 repository.workspace = true
 license.workspace = true
+description = "solana wasm wallet and client"
+homepage.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
 [package.metadata.release]
 sign-commit = true

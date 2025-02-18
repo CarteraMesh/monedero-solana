@@ -1,9 +1,13 @@
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-authors = ["Doug Chimento <dchimento@gmail.com>"]
-repository = "https://github.com/dougEfish/"
+authors = ["gh@cartera-mesh.com"]
+repository = "https://github.com/CarteraMesh/monedero-solana"
 license = "MIT"
+description = "Solana wasm client/wallet"
+homepage = "https://cartera-mesh.com"
+keywords = ["blockchain", "solana", "wasm"]
+categories = ["wasm", "cryptography::cryptocurrencies" ]
 
 [workspace]
 resolver = "2"

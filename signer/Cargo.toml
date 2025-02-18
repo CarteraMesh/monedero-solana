@@ -5,6 +5,10 @@ edition.workspace = true
 authors.workspace = true
 repository.workspace = true
 license.workspace = true
+description = "API for async sign and send"
+homepage.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
 [package.metadata.release]
 sign-commit = true
