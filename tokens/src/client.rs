@@ -18,6 +18,7 @@ use {
 pub struct TokenClient {
     pub(super) rpc: SolanaRpcClient,
     pub(super) owner: Pubkey,
+    #[allow(dead_code)]
     host: String,
 }
 
