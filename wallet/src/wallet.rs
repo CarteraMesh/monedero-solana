@@ -13,6 +13,7 @@ use {
     std::fmt::{Debug, Display},
     tracing::Level,
     wasm_client_solana::{
+        solana_account_decoder::parse_token::UiTokenAccount,
         SimulateTransactionResponseValue,
         SolanaRpcClient as RpcClient,
         VersionedTransactionExtension,
@@ -187,6 +188,10 @@ impl<S: TransactionSignerSender + Send + Sync> SolanaWallet<S> {
             lamports,
         )];
         self.send_instructions(&inst, None).await
+    }
+
+    pub async fn get_token(&self, mint: &Pubkey) -> crate::Result<Option<UiTokenAccount>> {
+        Ok(self.tc.get_token(mint).await?)
     }
 
     // pub async fn fees(&self) -> crate::Result<Vec<FeeType>> {

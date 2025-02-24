@@ -32,6 +32,15 @@ impl TokenClient {
         }
         let owner = &self.owner;
         let id = &token.program_id;
+        if spl_token::check_id(id) {
+            return Ok(spl_token::instruction::close_account(
+                id,
+                &token.address,
+                owner,
+                owner,
+                &[owner],
+            )?);
+        }
         Ok(spl_token_2022::instruction::close_account(
             id,
             &token.address,

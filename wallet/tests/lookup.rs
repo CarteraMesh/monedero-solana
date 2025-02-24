@@ -9,7 +9,6 @@ use {
         signer::Signer,
         sysvar::slot_hashes::{id as slot_hashes_id, SlotHashes},
     },
-    std::time::Duration,
     wasm_client_solana::{SolanaRpcClient, VersionedTransactionExtension},
 };
 
@@ -112,7 +111,6 @@ async fn lookup_deactivate(#[future] config: TestConfig) -> anyhow::Result<()> {
 #[rstest::rstest]
 async fn lookup_create(#[future] config: TestConfig) -> anyhow::Result<()> {
     let config = config.await;
-    let rpc = &config.rpc;
     let wallet = &config.wallet;
     let (account, sig) = wallet.lookup_create().await?;
     tracing::info!("lookup table created: {}", account);

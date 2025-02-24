@@ -53,13 +53,13 @@ impl StakeClient {
         &self,
         stake_account: &Pubkey,
         vote_account: &Pubkey,
-    ) -> Result<Vec<Instruction>> {
+    ) -> Result<Instruction> {
         self.validate(vote_account).await?;
-        Ok(vec![stake_instruction::delegate_stake(
+        Ok(stake_instruction::delegate_stake(
             stake_account,
             &self.owner,
             vote_account,
-        )])
+        ))
     }
 
     pub async fn create_delegate(
@@ -69,7 +69,6 @@ impl StakeClient {
         lamports: u64,
     ) -> Result<Vec<Instruction>> {
         let auth: Authorized = Authorized::auto(self.owner());
-        self.validate(vote_account).await?;
         let mut instructions = solana_sdk::stake::instruction::create_account(
             self.owner(),
             stake_pubkey,
@@ -77,11 +76,8 @@ impl StakeClient {
             &Lockup::default(),
             lamports,
         );
-        instructions.push(solana_sdk::stake::instruction::delegate_stake(
-            stake_pubkey,
-            self.owner(),
-            vote_account,
-        ));
+        let ins = self.delegate(stake_pubkey, vote_account).await?;
+        instructions.push(ins);
         Ok(instructions)
     }
 }

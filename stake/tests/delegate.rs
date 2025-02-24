@@ -15,6 +15,12 @@ async fn create_account(config: TestConfig) -> anyhow::Result<()> {
     assert_eq!(2, inst.len());
     assert_eq!(inst[0].program_id, solana_sdk::system_program::id());
     assert_eq!(inst[1].program_id, solana_sdk::stake::program::id());
+
+    // stake is too low
+    let should_err = c
+        .create_account("random seed", sol_to_lamports(0.001))
+        .await;
+    assert!(should_err.is_err());
     Ok(())
 }
 

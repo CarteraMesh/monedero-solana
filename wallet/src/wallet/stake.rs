@@ -1,16 +1,15 @@
 use {
     super::SolanaWallet,
     monedero_signer_sender::TransactionSignerSender,
-    monedero_solana_instructor::stake::KeyedStakeState,
+    monedero_solana_instructor::stake::{KeyedStakeState, StakeClient},
     solana_pubkey::Pubkey,
     solana_sdk::{signature::Keypair, signer::Signer},
     solana_signature::Signature,
 };
 
 impl<S: TransactionSignerSender + Send> SolanaWallet<S> {
-    pub async fn stake_accounts_undelegated(&self) -> crate::Result<Vec<KeyedStakeState>> {
-        let sc = self.instructor.stake_client();
-        Ok(sc.accounts_undelegated().await?)
+    pub fn stake_client(&self) -> &StakeClient {
+        self.instructor.stake_client()
     }
 
     pub async fn stake_accounts(&self) -> crate::Result<Vec<KeyedStakeState>> {

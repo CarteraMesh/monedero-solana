@@ -6,6 +6,11 @@ use {
 };
 
 #[allow(dead_code)]
+pub const MINT_LEGACY: Pubkey =
+    Pubkey::from_str_const("DicUMUUXQfJiEL2HH4DDMJuuf6JmBuihMyGhesy1itNa");
+#[allow(dead_code)]
+pub const MINT_EXT: Pubkey = Pubkey::from_str_const("3r7bFLZmBVoQFveemLLNM3rBqKvsZ5xFCxUBCbQgTasY");
+#[allow(dead_code)]
 pub const LOOKUP: Pubkey = Pubkey::from_str_const("4VdGS3365Jqa2WGRUVpnSkpTVvzgHECdVYtbysSsEzj1");
 #[allow(dead_code)]
 pub const TO: Pubkey = Pubkey::from_str_const("E4SfgGV2v9GLYsEkCQhrrnFbBcYmAiUZZbJ7swKGzZHJ");

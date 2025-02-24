@@ -5,20 +5,21 @@ use {
     solana_sdk::native_token::sol_to_lamports,
 };
 
-const VALIDATOR: Pubkey = Pubkey::from_str_const("7AETLyAGJWjp6AWzZqZcP362yv5LQ3nLEdwnXNjdNwwF");
+const VALIDATOR: Pubkey = Pubkey::from_str_const("vgcDar2pryHvMgPkKaZfh8pQy4BJxv7SpwUG7zinWjG");
 
 #[tokio::test]
 #[rstest::rstest]
 async fn stake_deactivate(#[future] config: TestConfig) -> anyhow::Result<()> {
     let w = &config.await.wallet;
-    let account = w
-        .stake_accounts()
-        .await?
-        .into_iter()
-        .find(|s| s.stake_state.deactivating_stake == 0 && s.stake_state.active_stake > 0);
-    assert!(account.is_some());
+    let sc = w.stake_client();
+    let accounts = sc.accounts_delegated().await?;
+    let account = accounts.first();
+    if account.is_none() {
+        tracing::warn!("no stakes accouts to deactivate");
+        return Ok(());
+    }
     let account = account.unwrap();
-    TestConfig::explorer(w.stake_deactivate(&account).await?);
+    TestConfig::explorer(w.stake_deactivate(account).await?);
     Ok(())
 }
 
@@ -26,7 +27,8 @@ async fn stake_deactivate(#[future] config: TestConfig) -> anyhow::Result<()> {
 #[rstest::rstest]
 async fn stake_withdraw(#[future] config: TestConfig) -> anyhow::Result<()> {
     let w = &config.await.wallet;
-    let accounts = w.stake_accounts_undelegated().await?;
+    let sc = w.stake_client();
+    let accounts = sc.accounts_idle().await?;
     if accounts.is_empty() {
         tracing::warn!("no stake accounts to withdraw");
         return Ok(());

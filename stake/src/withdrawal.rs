@@ -14,21 +14,23 @@ impl StakeClient {
     }
 
     pub fn deactivate_checked(&self, account: &KeyedStakeState) -> Result<Instruction> {
-        match &account.stake_state.delegated_vote_account_address {
-            Some(_) => Ok(self.deactivate(&account.stake_pubkey)),
-            None => Err(crate::Error::InvalidateState(format!(
-                "{} is not delegated",
-                account.stake_pubkey
+        match account.stake_state.condition {
+            crate::StakeCondition::Delegated => Ok(self.deactivate(&account.stake_pubkey)),
+            _ => Err(crate::Error::InvalidateState(format!(
+                "{} is {}. please deactivate 1st",
+                account.stake_pubkey, account.stake_state.condition
             ))),
         }
     }
 
     pub fn withdraw_checked(&self, account: &KeyedStakeState) -> Result<Instruction> {
-        match &account.stake_state.delegated_vote_account_address {
-            None => Ok(self.withdraw(&account.stake_pubkey, account.stake_state.account_balance)),
-            Some(_) => Err(crate::Error::InvalidateState(format!(
-                "{} is delegated. please deactivate 1st",
-                account.stake_pubkey
+        match account.stake_state.condition {
+            crate::StakeCondition::Idle => {
+                Ok(self.withdraw(&account.stake_pubkey, account.stake_state.account_balance))
+            }
+            _ => Err(crate::Error::InvalidateState(format!(
+                "{} is {}. please deactivate 1st",
+                account.stake_pubkey, account.stake_state.condition
             ))),
         }
     }
