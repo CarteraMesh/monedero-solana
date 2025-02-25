@@ -81,6 +81,43 @@ pub struct StakeState {
     pub activating_stake: u64,
     pub deactivating_stake: u64,
     pub epoch_rewards: Option<Vec<EpochReward>>,
+    pub condition: StakeCondition,
+}
+
+#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+pub enum StakeCondition {
+    Idle,
+    Deactivating,
+    #[default]
+    Delegated,
+}
+
+impl Display for StakeCondition {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let condition: String = match self {
+            Self::Idle => "idle".to_owned(),
+            Self::Deactivating => "dectivating".to_owned(),
+            Self::Delegated => "delegated".to_owned(),
+        };
+        write!(f, "{condition}")
+    }
+}
+
+impl StakeState {
+    pub fn stake_condition(stake: &Self) -> StakeCondition {
+        if stake.delegated_vote_account_address.is_none() {
+            return StakeCondition::Idle;
+        }
+        if stake.deactivation_epoch != 0 && stake.current_epoch > stake.deactivation_epoch {
+            return StakeCondition::Idle;
+        }
+
+        if stake.deactivation_epoch == 0 {
+            return StakeCondition::Delegated;
+        }
+
+        StakeCondition::Deactivating
+    }
 }
 
 impl Display for StakeState {
@@ -91,8 +128,8 @@ impl Display for StakeState {
             .map_or_else(String::new, |address| format!(" vote:{address}"));
         write!(
             f,
-            "delegated:{} balance:{} type:{} {}",
-            self.delegated_stake,
+            "condition:{} balance:{} type:{} {}",
+            self.condition,
             lamports_to_sol(self.account_balance),
             self.stake_type,
             v,

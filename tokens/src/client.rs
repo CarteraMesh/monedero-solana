@@ -9,7 +9,7 @@ use {
     url::Url,
     wasm_client_solana::{
         rpc_filter::TokenAccountsFilter,
-        solana_account_decoder::parse_token::spl_token_ids,
+        solana_account_decoder::parse_token::{spl_token_ids, UiTokenAccount},
         SolanaRpcClient,
     },
 };
@@ -59,6 +59,12 @@ impl TokenClient {
     fn fmt_common(&self) -> String {
         // format!("{} [{}]", self.owner, self.host)
         format!("[{}]", self.owner)
+    }
+
+    #[tracing::instrument(level = "info")]
+    pub async fn get_token(&self, mint: &Pubkey) -> crate::Result<Option<UiTokenAccount>> {
+        let result = self.rpc.get_token_account(mint).await?;
+        Ok(result)
     }
 
     #[tracing::instrument(level = "info")]

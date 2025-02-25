@@ -1,6 +1,6 @@
 use {
     super::{Result, StakeClient},
-    crate::{KeyedStakeState, StakeState},
+    crate::{KeyedStakeState, StakeCondition, StakeState},
     solana_program::{
         clock::{Clock, Epoch, Slot},
         feature::Feature,
@@ -42,12 +42,21 @@ impl StakeClient {
         Ok(delegators.current)
     }
 
-    pub async fn accounts_undelegated(&self) -> Result<Vec<KeyedStakeState>> {
+    pub async fn accounts_idle(&self) -> Result<Vec<KeyedStakeState>> {
         Ok(self
             .accounts()
             .await?
             .into_iter()
-            .filter(|a| a.stake_state.delegated_vote_account_address.is_none())
+            .filter(|a| a.stake_state.condition == StakeCondition::Idle)
+            .collect())
+    }
+
+    pub async fn accounts_delegated(&self) -> Result<Vec<KeyedStakeState>> {
+        Ok(self
+            .accounts()
+            .await?
+            .into_iter()
+            .filter(|a| a.stake_state.condition == StakeCondition::Delegated)
             .collect())
     }
 
@@ -101,6 +110,7 @@ impl StakeClient {
                 _ => {}
             }
         }
+        // tracing::info!("{stake_accounts:#?}");
         Ok(stake_accounts)
     }
 }
@@ -113,7 +123,7 @@ fn build_stake_state(
     clock: &Clock,
     new_rate_activation_epoch: Option<Epoch>,
 ) -> StakeState {
-    match stake_state {
+    let mut st = match stake_state {
         StakeStateV2::Stake(
             Meta {
                 rent_exempt_reserve,
@@ -198,5 +208,7 @@ fn build_stake_state(
                 ..StakeState::default()
             }
         }
-    }
+    };
+    st.condition = StakeState::stake_condition(&st);
+    st
 }

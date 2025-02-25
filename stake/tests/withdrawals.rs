@@ -1,7 +1,7 @@
 mod setup;
 
 use {
-    monedero_solana_stake::{KeyedStakeState, StakeState},
+    monedero_solana_stake::{KeyedStakeState, StakeCondition, StakeState},
     setup::{config, TestConfig},
     solana_pubkey::Pubkey,
 };
@@ -9,19 +9,24 @@ use {
 fn accounts(config: TestConfig) -> anyhow::Result<()> {
     let c = &config.client;
     let dummy = Pubkey::default();
-    let state = StakeState::default();
+    let state = StakeState {
+        condition: StakeCondition::Idle,
+        ..Default::default()
+    };
     let mut account = KeyedStakeState {
         stake_pubkey: dummy,
         stake_state: state,
     };
     c.withdraw_checked(&account)?;
 
-    account.stake_state.delegated_vote_account_address = Some(dummy.to_string());
+    account.stake_state.condition = StakeCondition::Delegated;
 
     assert!(c.withdraw_checked(&account).is_err());
     c.deactivate_checked(&account)?;
 
-    account.stake_state.delegated_vote_account_address = None;
+    account.stake_state.condition = StakeCondition::Deactivating;
     assert!(c.deactivate_checked(&account).is_err());
+
+    tracing::debug!("{}", account.stake_state);
     Ok(())
 }
