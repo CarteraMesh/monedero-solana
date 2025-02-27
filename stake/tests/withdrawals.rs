@@ -27,6 +27,6 @@ fn accounts(config: TestConfig) -> anyhow::Result<()> {
     account.stake_state.condition = StakeCondition::Deactivating;
     assert!(c.deactivate_checked(&account).is_err());
 
-    tracing::debug!("{}", account.stake_state);
+    tracing::info!("{}", account.stake_state);
     Ok(())
 }

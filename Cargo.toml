@@ -21,7 +21,6 @@ members = [
 ]
 
 [workspace.lints.rust]
-unsafe_code = "forbid"
 unused_variables = "warn"
 unused_imports = "warn"
 dead_code = "warn"
@@ -36,6 +35,7 @@ missing_errors_doc = "allow"
 must_use_candidate = "allow"
 doc_markdown = "allow"
 missing_const_for_fn = "allow"
+future_not_send = "allow"
 #dead_code = "allow"
 
 [workspace.dependencies]
@@ -91,7 +91,7 @@ solana-program = { version = ">=2.1, <2.2"}
 solana-sdk = { version = ">=2.1, <2.2", default-features = false , features = ["full"] }
 solana-pubkey = { version = ">=2.1, <2.2"}
 solana-signature = { version = ">=2.1, <2.2"}
-solana-signer = { version = "0.0.2" }
+# solana-signer = { version = "0.0.2" }
 solana-system-transaction = { version = "0.0.2" }
 solana-system-interface = { version = "1" , features = ["bincode"] }
 solana-transaction = { version = "0.0.2" }

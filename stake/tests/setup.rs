@@ -16,7 +16,7 @@ impl TestConfig {
     fn new() -> Self {
         let (_, rpc) = test_utils::rpc_provider();
         let tc = StakeClient::new(&test_utils::OWNER, &rpc);
-        tracing::debug!("created stake client {tc}");
+        tracing::info!("created stake client {tc}");
         Self { client: tc, rpc }
     }
 }

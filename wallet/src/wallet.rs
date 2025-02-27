@@ -43,19 +43,19 @@ pub struct SolanaWallet<S: TransactionSignerSender> {
     default_lookup: Vec<AddressLookupTableAccount>,
 }
 
-impl<S: TransactionSignerSender + Send> Debug for SolanaWallet<S> {
+impl<S: TransactionSignerSender> Debug for SolanaWallet<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[{}]", self.pk())
     }
 }
 
-impl<S: TransactionSignerSender + Send> Display for SolanaWallet<S> {
+impl<S: TransactionSignerSender> Display for SolanaWallet<S> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[{}]", self.pk())
     }
 }
 
-impl<S: TransactionSignerSender + Send + Sync> SolanaWallet<S> {
+impl<S: TransactionSignerSender> SolanaWallet<S> {
     pub fn new(signer: S, rpc: &RpcClient) -> Self {
         let payer = signer.pubkey();
         let instructor = Instructor::new(&payer, rpc);
@@ -85,7 +85,8 @@ impl<S: TransactionSignerSender + Send + Sync> SolanaWallet<S> {
         Ok(wallet)
     }
 
-    #[tracing::instrument(level = "info", skip(table))]
+    //#[tracing::instrument(level = "info", skip(table))]
+    #[allow(dead_code)]
     async fn lookup(&self, table: &Pubkey) -> Option<Vec<AddressLookupTableAccount>> {
         let addr_table = self.rpc.get_address_lookup_table(table).await.ok();
         addr_table.and_then(|t| {

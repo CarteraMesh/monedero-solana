@@ -9,19 +9,8 @@ mod kp;
 
 pub use kp::KeypairSender;
 
-// #[cfg(target_family = "wasm")]
-// #[async_trait(?Send)]
-// pub trait TransactionSignerSender {
-// fn pubkey(&self) -> Pubkey;
-// async fn sign_and_send(
-// &self,
-// tx: &mut VersionedTransaction,
-// ) -> std::result::Result<Signature, SignerError>;
-// }
-
-#[cfg(not(target_family = "wasm"))]
-#[async_trait]
-pub trait TransactionSignerSender: Sync {
+#[async_trait(?Send)]
+pub trait TransactionSignerSender {
     fn pubkey(&self) -> Pubkey;
     async fn sign_and_send(
         &self,
@@ -29,10 +18,69 @@ pub trait TransactionSignerSender: Sync {
     ) -> std::result::Result<Signature, SignerError>;
 }
 
+#[cfg(not(target_family = "wasm"))]
+pub trait TransactionSignerSenderAutoSend: Send {}
+
+#[cfg(not(target_family = "wasm"))]
+impl<T: TransactionSignerSender + Send> TransactionSignerSenderAutoSend for T {}
+
+pub struct NoopSigner {
+    pubkey: Pubkey,
+}
+
+impl From<Pubkey> for NoopSigner {
+    fn from(pubkey: Pubkey) -> Self {
+        Self::new(pubkey)
+    }
+}
+
+impl NoopSigner {
+    pub fn new(pubkey: Pubkey) -> Self {
+        Self { pubkey }
+    }
+}
+
+#[async_trait(?Send)]
+impl TransactionSignerSender for NoopSigner {
+    fn pubkey(&self) -> Pubkey {
+        self.pubkey
+    }
+
+    async fn sign_and_send(
+        &self,
+        _tx: &mut VersionedTransaction,
+    ) -> std::result::Result<Signature, SignerError> {
+        return Err(SignerError::Custom("Not Implemented".to_owned()));
+    }
+}
+
 #[cfg(test)]
 mod test {
 
-    use {super::*, solana_sdk::signature::Keypair, wasm_client_solana::DEVNET};
+    use {
+        super::*,
+        solana_sdk::{hash::Hash, signature::Keypair, signer::Signer},
+        wasm_client_solana::{VersionedTransactionExtension, DEVNET},
+    };
+
+    #[tokio::test]
+    async fn test_into() -> anyhow::Result<()> {
+        let kp = Keypair::new();
+        let pk = kp.pubkey();
+        let signer: NoopSigner = pk.into();
+        assert_eq!(signer.pubkey(), kp.pubkey());
+
+        let inst = vec![solana_sdk::system_instruction::transfer(
+            &signer.pubkey(),
+            &signer.pubkey(),
+            1,
+        )];
+        let mut tx =
+            VersionedTransaction::new_unsigned_v0(&signer.pubkey(), &inst, &[], Hash::default())?;
+        let result = signer.sign_and_send(&mut tx).await;
+        assert!(result.is_err());
+        Ok(())
+    }
 
     #[test]
     fn test_bad_key() -> anyhow::Result<()> {

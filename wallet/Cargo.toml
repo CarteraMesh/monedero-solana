@@ -40,7 +40,6 @@ solana-program = { workspace = true }
 solana-pubkey = { workspace = true }
 solana-sdk = { workspace = true }
 solana-signature = { workspace = true }
-solana-signer = { workspace = true }
 spl-associated-token-account= { workspace = true }
 spl-associated-token-account-client = { workspace = true }
 spl-memo = { workspace = true }
