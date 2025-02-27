@@ -8,7 +8,7 @@ use {
     std::collections::BTreeSet,
 };
 
-impl<S: TransactionSignerSender + Send> SolanaWallet<S> {
+impl<S: TransactionSignerSender> SolanaWallet<S> {
     pub async fn token_mint(
         &self,
         mint: &Pubkey,

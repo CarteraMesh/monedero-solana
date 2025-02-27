@@ -31,7 +31,7 @@ impl KeypairSender {
     }
 }
 
-#[async_trait]
+#[async_trait(?Send)]
 impl TransactionSignerSender for KeypairSender {
     fn pubkey(&self) -> Pubkey {
         self.pk

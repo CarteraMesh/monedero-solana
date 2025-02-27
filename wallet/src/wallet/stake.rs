@@ -7,7 +7,7 @@ use {
     solana_signature::Signature,
 };
 
-impl<S: TransactionSignerSender + Send> SolanaWallet<S> {
+impl<S: TransactionSignerSender> SolanaWallet<S> {
     pub fn stake_client(&self) -> &StakeClient {
         self.instructor.stake_client()
     }

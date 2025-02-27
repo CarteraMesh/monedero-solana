@@ -14,7 +14,7 @@ use {
     },
 };
 
-impl<S: TransactionSignerSender + Send> SolanaWallet<S> {
+impl<S: TransactionSignerSender> SolanaWallet<S> {
     #[tracing::instrument(level = "info", skip(accounts))]
     pub async fn lookup_extend(
         &self,

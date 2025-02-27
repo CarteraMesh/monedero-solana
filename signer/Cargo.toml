@@ -32,3 +32,5 @@ wasm_client_solana = { version = "0.7", features = ["js"]}
 
 [dev-dependencies]
 anyhow = { workspace = true }
+tokio = { workspace = true }
+solana-sdk = { workspace = true }
