@@ -88,7 +88,7 @@ solana-feature-set ={ version = ">=2.1, <2.2" }
 solana-keypair = { version = "0.0.2" }
 solana-message = { version = "0.0.3"}
 solana-program = { version = ">=2.1, <2.2"}
-solana-sdk = { version = ">=2.1, <2.2", default-features = false , features = ["full"] }
+solana-sdk = { version = ">=2.1, <2.3", default-features = false , features = ["full"] }
 solana-pubkey = { version = ">=2.1, <2.2"}
 solana-signature = { version = ">=2.1, <2.2"}
 # solana-signer = { version = "0.0.2" }
