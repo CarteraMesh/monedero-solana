@@ -23,7 +23,9 @@ use {
 // mod name;
 // mod sweep;
 mod lookup;
+mod native;
 mod stake;
+mod swap;
 mod tokens;
 
 #[derive(Debug)]
@@ -85,14 +87,16 @@ impl<S: TransactionSignerSender> SolanaWallet<S> {
         Ok(wallet)
     }
 
-    //#[tracing::instrument(level = "info", skip(table))]
-    #[allow(dead_code)]
-    async fn lookup(&self, table: &Pubkey) -> Option<Vec<AddressLookupTableAccount>> {
-        let addr_table = self.rpc.get_address_lookup_table(table).await.ok();
-        addr_table.and_then(|t| {
-            t.optional_address_lookup_table_account(table)
-                .map(|table| vec![table])
-        })
+    #[tracing::instrument(level = "info", skip(addresses))]
+    async fn lookup(&self, addresses: &[Pubkey]) -> crate::Result<Vec<AddressLookupTableAccount>> {
+        let mut lookups = Vec::with_capacity(3);
+        for a in addresses {
+            let addr_table = self.rpc.get_address_lookup_table(a).await?;
+            if let Some(t) = addr_table.optional_address_lookup_table_account(a) {
+                lookups.push(t);
+            }
+        }
+        Ok(lookups)
     }
 
     pub async fn simulate(
@@ -145,23 +149,18 @@ impl<S: TransactionSignerSender> SolanaWallet<S> {
     pub async fn send_instructions(
         &self,
         ix: &[Instruction],
-        _table: Option<&Pubkey>,
+        lookups: Option<Vec<Pubkey>>,
     ) -> crate::Result<Signature> {
         let block = self.rpc.get_latest_blockhash().await?;
-        let lookup = &self.default_lookup;
-        // if table.is_some() {
-        //    let t = self.lookup(table.unwrap()).await;
-        //    if t.is_some() {
-        //        lookup = &t.unwrap();
-        //    }
-        //}
-        // if !lookup.is_empty() {
-        //    tracing::info!("lookup {:#?}", lookup[0]);
-        //}
-        let mut tx = VersionedTransaction::new_unsigned_v0(&self.payer, ix, lookup, block)?;
-        // if let Some(a) = tx.message.address_table_lookups() {
-        //    tracing::info!("{:#?}", a);
-        //}
+        let mut tx: VersionedTransaction = match lookups {
+            None => {
+                VersionedTransaction::new_unsigned_v0(&self.payer, ix, &self.default_lookup, block)?
+            }
+            Some(ref addresses) => {
+                let table = self.lookup(addresses).await?;
+                VersionedTransaction::new_unsigned_v0(&self.payer, ix, &table, block)?
+            }
+        };
         let encoded = BASE64_STANDARD.encode(bincode::serialize(&tx)?);
         tracing::debug!("encoded {encoded}");
         let _ = self.simulate(&tx).await?;

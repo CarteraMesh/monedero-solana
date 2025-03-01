@@ -9,6 +9,7 @@ updates:
     schedule:
       interval: daily
     ignore:
+      - dependency-name: "solana*"
       - dependency-name: "*"
         # patch and minor updates don't matter for libraries as consumers of this library build
         # with their own lockfile, rather than the version specified in this library's lockfile

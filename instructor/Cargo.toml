@@ -18,6 +18,7 @@ push-remote = "origin"
 borsh = { workspace = true }
 monedero-solana-tokens = { path = "../tokens/", version = "0.1.1-rc.3" }
 monedero-solana-stake = { path = "../stake/" , version = "0.1.1-rc.2" }
+monedero-jup-ag = { path = "../jupiter/" , version = "0.1.0" }
 spl-associated-token-account = { workspace = true   }
 spl-associated-token-account-client = { workspace = true }
 spl-token = { workspace = true }

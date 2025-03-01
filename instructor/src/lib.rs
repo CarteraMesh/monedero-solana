@@ -2,17 +2,31 @@ mod error;
 mod lookup;
 mod memo;
 pub use error::Error;
-use {monedero_solana_stake::StakeClient, monedero_solana_tokens::TokenClient};
+use {
+    monedero_jup_ag::JupiterInstructor,
+    monedero_solana_stake::StakeClient,
+    monedero_solana_tokens::TokenClient,
+};
 pub type Result<T> = std::result::Result<T, Error>;
-pub use {monedero_solana_stake as stake, monedero_solana_tokens as token};
+pub use {
+    monedero_jup_ag as jup_ag,
+    monedero_solana_stake as stake,
+    monedero_solana_tokens as token,
+};
 use {solana_pubkey::Pubkey, wasm_client_solana::SolanaRpcClient};
+
 #[derive(Clone)]
 pub struct Instructor {
     token_client: TokenClient,
     stake_client: StakeClient,
+    jup_client: JupiterInstructor,
 }
 
 impl Instructor {
+    pub fn jup_client(&self) -> &JupiterInstructor {
+        &self.jup_client
+    }
+
     pub fn token_client(&self) -> &TokenClient {
         &self.token_client
     }
@@ -35,6 +49,7 @@ impl Instructor {
         Self {
             token_client,
             stake_client,
+            jup_client: JupiterInstructor::new(payer),
         }
     }
 }
