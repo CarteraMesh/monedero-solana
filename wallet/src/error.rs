@@ -94,4 +94,7 @@ pub enum Error {
 
     #[error(transparent)]
     StakeError(#[from] monedero_solana_instructor::stake::Error),
+
+    #[error(transparent)]
+    JupiterError(#[from] monedero_solana_instructor::jup_ag::Error),
 }

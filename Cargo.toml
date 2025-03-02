@@ -18,6 +18,7 @@ members = [
   "stake",
   "tokens",
   "wallet",
+  "jupiter",
 ]
 
 [workspace.lints.rust]
@@ -42,9 +43,10 @@ future_not_send = "allow"
 aead = { version = "0.5.2" }
 anyhow = { version = "1" }
 async-trait = { version = "0.1"}
-bincode = { version = "1.3"}
 base64 =  { version = "0.22" }
+bincode = { version = "1.3"}
 borsh = { version = "^1.5" }
+bon = { version = "3" }
 chacha20poly1305 = "0.10"
 chrono = { version = "0.4", default-features = false, features = [
     "std",
@@ -61,6 +63,7 @@ futures = { version = "0.3"}
 futures-util = { version = "0.3" }
 hex = { version = "0.4" }
 hkdf = "0.12"
+jup-ag = { git = "https://github.com/dougEfresh/rust-jup-ag.git" , branch = "master" }
 lazy_static = "1.4"
 once_cell = "1.16"
 # pin-project-lite = {version = "0.2.14" }
@@ -72,8 +75,8 @@ sha2 = "0.10"
 serde = { version = "1.0", features = ["derive", "rc"] }
 serde_json = "1.0"
 serde_with = { version = "3" }
-strum = { version = "0.26"}
-strum_macros = { version = "0.26" }
+strum = { version = "0.27"}
+strum_macros = { version = "0.27" }
 spl-associated-token-account-client = { version = "2.0.0" }
 spl-associated-token-account = {  version = "6"  }
 spl-memo = { version = "6" }
@@ -85,16 +88,12 @@ solana-client ={ version = ">=2.1, <2.2" }
 solana-compute-budget =  { version = ">=2.1, <2.2" }
 solana-instruction = { version = ">=2.1, <2.2"}
 solana-feature-set ={ version = ">=2.1, <2.2" }
-solana-keypair = { version = "0.0.2" }
-solana-message = { version = "0.0.3"}
 solana-program = { version = ">=2.1, <2.2"}
 solana-sdk = { version = ">=2.1, <2.2", default-features = false , features = ["full"] }
 solana-pubkey = { version = ">=2.1, <2.2"}
 solana-signature = { version = ">=2.1, <2.2"}
 # solana-signer = { version = "0.0.2" }
-solana-system-transaction = { version = "0.0.2" }
-solana-system-interface = { version = "1" , features = ["bincode"] }
-solana-transaction = { version = "0.0.2" }
+# solana-transaction = { version = "0.0.2" }
 thiserror =  { version = "2" }
 tokio = { version = "1", features = ["rt", "time", "sync", "macros"] }
 tracing = { version = "0.1" }
@@ -108,7 +107,7 @@ console_error_panic_hook = "0.1"
 gloo-storage = { version = "0.3" }
 gloo-timers = { version = "0.3", features = ["futures"] }
 web-time = { version = "1.1.0", features = ["serde"] }
-wasm-tracing = { version = "0.2", features = ["tracing-log"] }
+wasm-tracing = { version = "2", features = ["tracing-log"] }
 wasm-bindgen-futures = { version = "0.4" }
 wallet_standard_browser =  { version = "0.4", features = ["solana"] }
 wasm-bindgen = { version = "0.2.99", features = ["serde-serialize"] }
