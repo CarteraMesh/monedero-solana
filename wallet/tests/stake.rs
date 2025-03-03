@@ -41,7 +41,7 @@ async fn stake_withdraw(#[future] config: TestConfig) -> anyhow::Result<()> {
 #[rstest::rstest]
 async fn stake_create(#[future] config: TestConfig) -> anyhow::Result<()> {
     let w = &config.await.wallet;
-    let (account, sig) = w.stake_create(sol_to_lamports(2.1)).await?;
+    let (account, sig) = w.stake_create(sol_to_lamports(0.1)).await?;
     tracing::info!("new stake account {account}");
     TestConfig::explorer(sig);
     Ok(())
@@ -52,7 +52,7 @@ async fn stake_create(#[future] config: TestConfig) -> anyhow::Result<()> {
 async fn stake_delegate_create(#[future] config: TestConfig) -> anyhow::Result<()> {
     let w = &config.await.wallet;
     let (account, sig) = w
-        .stake_create_and_delegate(&VALIDATOR, sol_to_lamports(2.1))
+        .stake_create_and_delegate(&VALIDATOR, sol_to_lamports(0.1))
         .await?;
     tracing::info!("new stake account {account}");
     TestConfig::explorer(sig);
