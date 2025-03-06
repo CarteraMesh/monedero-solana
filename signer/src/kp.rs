@@ -31,7 +31,8 @@ impl KeypairSender {
     }
 }
 
-#[async_trait(?Send)]
+#[cfg_attr(target_family = "wasm", async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait)]
 impl TransactionSignerSender for KeypairSender {
     fn pubkey(&self) -> Pubkey {
         self.pk

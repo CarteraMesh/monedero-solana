@@ -2,22 +2,17 @@ pub use jup_ag::QuoteConfig;
 use {jup_ag::SwapRequest, solana_pubkey::Pubkey, solana_sdk::instruction::Instruction};
 mod error;
 pub use error::Error;
-// use wasm_client_solana::SolanaRpcClient;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Clone)]
 pub struct JupiterInstructor {
     owner: Pubkey,
-    // rpc: SolanaRpcClient,
 }
 
 impl JupiterInstructor {
     pub fn new(owner: &Pubkey) -> Self {
-        Self {
-            owner: *owner,
-            // rpc: rpc.clone(),
-        }
+        Self { owner: *owner }
     }
 
     /// See https://station.jup.ag/docs/old/apis/swap-api#instructions-instead-of-transaction
@@ -66,6 +61,24 @@ mod test {
         std::str::FromStr,
         test_utils::setup,
     };
+
+    #[tokio::test]
+    async fn swap_wsol() -> anyhow::Result<()> {
+        setup();
+        let usdc = Pubkey::from_str("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")?;
+        let jup = JupiterInstructor::new(&test_utils::OWNER);
+        let quote = QuoteConfig {
+            slippage_bps: Some(1),
+            ..Default::default()
+        };
+        let (instructions, lookups) = jup
+            .swap(&id(), &usdc, sol_to_lamports(1.0), quote, true)
+            .await?;
+        assert!(!instructions.is_empty());
+        assert!(!lookups.is_empty());
+        Ok(())
+    }
+
     #[tokio::test]
     async fn swap_sol() -> anyhow::Result<()> {
         setup();
@@ -76,7 +89,7 @@ mod test {
             ..Default::default()
         };
         let (instructions, lookups) = jup
-            .swap(&id(), &usdc, sol_to_lamports(1.0), quote, true)
+            .swap(&id(), &usdc, sol_to_lamports(1.0), quote, false)
             .await?;
         assert!(!instructions.is_empty());
         assert!(!lookups.is_empty());
