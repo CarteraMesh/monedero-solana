@@ -9,7 +9,8 @@ mod kp;
 
 pub use kp::KeypairSender;
 
-#[async_trait(?Send)]
+#[cfg_attr(target_family = "wasm", async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait)]
 pub trait TransactionSignerSender {
     fn pubkey(&self) -> Pubkey;
     async fn sign_and_send(
@@ -17,12 +18,6 @@ pub trait TransactionSignerSender {
         tx: &mut VersionedTransaction,
     ) -> std::result::Result<Signature, SignerError>;
 }
-
-#[cfg(not(target_family = "wasm"))]
-pub trait TransactionSignerSenderAutoSend: Send {}
-
-#[cfg(not(target_family = "wasm"))]
-impl<T: TransactionSignerSender + Send> TransactionSignerSenderAutoSend for T {}
 
 pub struct NoopSigner {
     pubkey: Pubkey,
@@ -40,7 +35,8 @@ impl NoopSigner {
     }
 }
 
-#[async_trait(?Send)]
+#[cfg_attr(target_family = "wasm", async_trait(?Send))]
+#[cfg_attr(not(target_family = "wasm"), async_trait)]
 impl TransactionSignerSender for NoopSigner {
     fn pubkey(&self) -> Pubkey {
         self.pubkey
