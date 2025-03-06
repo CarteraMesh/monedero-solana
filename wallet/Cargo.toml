@@ -26,7 +26,7 @@ chrono = { workspace = true }
 derive_more = { workspace = true }
 futures = { workspace = true }
 monedero-solana-instructor = { path = "../instructor", version = "0.1.1-rc.2" }
-monedero-signer-sender = { path = "../signer/", version = "0.1.1-rc.1" }
+monedero-signer-sender = { path = "../signer/", version = "0.1.1" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 serde_with = { workspace = true }
