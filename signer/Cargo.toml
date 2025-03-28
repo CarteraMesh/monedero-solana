@@ -24,10 +24,10 @@ solana-sdk = { workspace = true }
 solana-pubkey = { workspace = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-wasm_client_solana = { version = "0.7", features = ["ssr", "zstd"]}
+wasm_client_solana = { version = "0.8", features = ["ssr", "zstd"]}
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-wasm_client_solana = { version = "0.7", features = ["js"]}
+wasm_client_solana = { version = "0.8", features = ["js"]}
 
 
 [dev-dependencies]
