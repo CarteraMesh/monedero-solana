@@ -82,7 +82,7 @@ spl-associated-token-account-client = { version = "2.0.0" }
 spl-associated-token-account = {  version = "6"  }
 spl-memo = { version = "6" }
 spl-token = { version = "^7.0" }
-spl-token-2022 = {version = "^7.0" }
+spl-token-2022 = {version = "^8.0" }
 solana-account = { version = ">=2.1, <2.2" }
 solana-account-decoder = { version = ">=2.1, <2.2" }
 solana-client ={ version = ">=2.1, <2.2" }
