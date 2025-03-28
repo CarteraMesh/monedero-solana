@@ -1,8 +1,7 @@
-pub use jup_ag::QuoteConfig;
-use {jup_ag::SwapRequest, solana_pubkey::Pubkey, solana_sdk::instruction::Instruction};
 mod error;
-pub use error::Error;
-
+mod jup_ag;
+pub use {error::Error, jup_ag::*};
+use {solana_pubkey::Pubkey, solana_sdk::instruction::Instruction};
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Clone)]
@@ -53,8 +52,7 @@ impl JupiterInstructor {
 #[cfg(test)]
 mod test {
     use {
-        crate::JupiterInstructor,
-        jup_ag::QuoteConfig,
+        crate::{jup_ag::QuoteConfig, JupiterInstructor},
         solana_pubkey::Pubkey,
         solana_sdk::native_token::sol_to_lamports,
         spl_token::native_mint::id,

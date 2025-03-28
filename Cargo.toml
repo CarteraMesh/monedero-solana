@@ -37,6 +37,7 @@ must_use_candidate = "allow"
 doc_markdown = "allow"
 missing_const_for_fn = "allow"
 future_not_send = "allow"
+too_long_first_doc_paragraph = "allow"
 #dead_code = "allow"
 
 [workspace.dependencies]
@@ -63,7 +64,7 @@ futures = { version = "0.3"}
 futures-util = { version = "0.3" }
 hex = { version = "0.4" }
 hkdf = "0.12"
-jup-ag = { git = "https://github.com/dougEfresh/rust-jup-ag.git" , branch = "master" }
+itertools = { version = "0.14"}
 lazy_static = "1.4"
 once_cell = "1.16"
 # pin-project-lite = {version = "0.2.14" }
