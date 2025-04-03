@@ -57,7 +57,7 @@ chrono = { version = "0.4", default-features = false, features = [
     "wasm-bindgen"
 ] }
 data-encoding = { version = "2"}
-derive_more = {version = "1", features = ["full"]}
+derive_more = {version = "2", features = ["full"]}
 dotenvy = {version = "0.15"}
 enum-str-derive = { version = "0.1" }
 futures = { version = "0.3"}
