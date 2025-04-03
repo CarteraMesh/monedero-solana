@@ -41,7 +41,6 @@ pub struct SolanaWallet<S: TransactionSignerSender> {
     tc: TokenClient,
     payer: Pubkey,
     rpc: RpcClient,
-    // memo: Option<String>,
     default_lookup: Vec<AddressLookupTableAccount>,
 }
 
@@ -178,6 +177,20 @@ impl<S: TransactionSignerSender> SolanaWallet<S> {
 
     pub async fn balance(&self) -> crate::Result<u64> {
         Ok(self.rpc.get_balance(&self.payer).await?)
+    }
+
+    #[tracing::instrument(level = "info")]
+    pub async fn transfer_memo(
+        &self,
+        to: &Pubkey,
+        lamports: u64,
+        memo: &str,
+    ) -> crate::Result<Signature> {
+        let inst = vec![
+            self.instructor.memo(memo),
+            solana_sdk::system_instruction::transfer(&self.payer, to, lamports),
+        ];
+        self.send_instructions(&inst, None).await
     }
 
     #[tracing::instrument(level = "info")]

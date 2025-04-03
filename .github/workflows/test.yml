@@ -17,6 +17,7 @@ name: test
 env:
   RPC_URL: ${{ secrets.RPC_URL }}
   RUST_LOG: "info"
+  RUST_BACKTRACE: "1"
 jobs:
   required:
     runs-on: ubuntu-latest
