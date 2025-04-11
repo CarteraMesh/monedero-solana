@@ -14,20 +14,18 @@ impl JupiterInstructor {
         Self { owner: *owner }
     }
 
-    /// See https://station.jup.ag/docs/old/apis/swap-api#instructions-instead-of-transaction
-    pub async fn swap(
+    pub async fn quote(
         &self,
         from: &Pubkey,
         to: &Pubkey,
         amount: u64,
         quote: QuoteConfig,
-        wrap_and_unwrap_sol: bool,
-    ) -> Result<(Vec<Instruction>, Vec<Pubkey>)> {
-        let quotes = jup_ag::quote(*from, *to, amount, quote).await?;
-        let mut request: SwapRequest = SwapRequest::new(self.owner, quotes);
-        request.wrap_and_unwrap_sol = Some(wrap_and_unwrap_sol);
-        let mut swap_instructions = jup_ag::swap_instructions(request).await?;
+    ) -> Result<Quote> {
+        jup_ag::quote(*from, *to, amount, quote).await
+    }
 
+    pub async fn swap_request(swap: SwapRequest) -> Result<(Vec<Instruction>, Vec<Pubkey>)> {
+        let mut swap_instructions = jup_ag::swap_instructions(swap).await?;
         let mut instructions = Vec::with_capacity(
             swap_instructions.compute_budget_instructions.len()
                 + swap_instructions.setup_instructions.len()
@@ -47,30 +45,72 @@ impl JupiterInstructor {
             swap_instructions.address_lookup_table_addresses,
         ))
     }
+
+    /// See https://station.jup.ag/docs/old/apis/swap-api#instructions-instead-of-transaction
+    pub async fn swap(
+        &self,
+        from: &Pubkey,
+        to: &Pubkey,
+        amount: u64,
+        quote: QuoteConfig,
+        wrap_and_unwrap_sol: bool,
+    ) -> Result<(Vec<Instruction>, Vec<Pubkey>)> {
+        let quotes = self.quote(from, to, amount, quote).await?;
+        // let request = SwapRequest::new(self.owner, quotes);
+        let request: SwapRequest = SwapRequest::builder()
+            .quote_response(quotes)
+            .user_public_key(self.owner)
+            .wrap_and_unwrap_sol(wrap_and_unwrap_sol)
+            .prioritization_fee_lamports(PrioritizationFeeLamports::Auto)
+            .build();
+        Self::swap_request(request).await
+    }
 }
 
 #[cfg(test)]
 mod test {
     use {
-        crate::{jup_ag::QuoteConfig, JupiterInstructor},
+        crate::{
+            jup_ag::QuoteConfig, JupiterInstructor, PrioritizationFeeLamports, Quote, SwapMode,
+            SwapRequest,
+        },
         solana_pubkey::Pubkey,
         solana_sdk::native_token::sol_to_lamports,
         spl_token::native_mint::id,
-        std::str::FromStr,
         test_utils::setup,
     };
+    const USDC: Pubkey = Pubkey::from_str_const("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
 
+    // #[test]
+    // fn swap_request() {
+    //     let quote = Quote::builder()
+    //         .input_mint(USDC)
+    //         .in_amount(1)
+    //         .slippage_bps(0)
+    //         .out_amount(1)
+    //         .output_mint(USDC)
+    //         .route_plan(vec![])
+    //         .price_impact_pct(0.0)
+    //         .other_amount_threshold(1)
+    //         .swap_mode(SwapMode::ExactIn.to_string())
+    //         .build();
+    //     let _ = SwapRequest::builder()
+    //         .quote_response(quote)
+    //         .prioritization_fee_lamports(PrioritizationFeeLamports::Auto)
+    //         .wrap_and_unwrap_sol(true)
+    //         .user_public_key(&TESTNET::OWNER)
+    //         .build();
+    // }
     #[tokio::test]
     async fn swap_wsol() -> anyhow::Result<()> {
         setup();
-        let usdc = Pubkey::from_str("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")?;
         let jup = JupiterInstructor::new(&test_utils::OWNER);
         let quote = QuoteConfig {
             slippage_bps: Some(1),
             ..Default::default()
         };
         let (instructions, lookups) = jup
-            .swap(&id(), &usdc, sol_to_lamports(1.0), quote, true)
+            .swap(&id(), &USDC, sol_to_lamports(1.0), quote, true)
             .await?;
         assert!(!instructions.is_empty());
         assert!(!lookups.is_empty());
@@ -80,14 +120,13 @@ mod test {
     #[tokio::test]
     async fn swap_sol() -> anyhow::Result<()> {
         setup();
-        let usdc = Pubkey::from_str("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")?;
         let jup = JupiterInstructor::new(&test_utils::OWNER);
         let quote = QuoteConfig {
             slippage_bps: Some(1),
             ..Default::default()
         };
         let (instructions, lookups) = jup
-            .swap(&id(), &usdc, sol_to_lamports(1.0), quote, false)
+            .swap(&id(), &USDC, sol_to_lamports(1.0), quote, false)
             .await?;
         assert!(!instructions.is_empty());
         assert!(!lookups.is_empty());

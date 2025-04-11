@@ -158,6 +158,7 @@ where
     if let Ok(ErrorResponse { error }) = serde_json::from_value::<ErrorResponse>(value.clone()) {
         Err(Error::JupiterApi(error))
     } else {
+        eprintln!("{}", serde_json::to_string(&value).unwrap());
         serde_json::from_value(value).map_err(std::convert::Into::into)
     }
 }
@@ -215,7 +216,7 @@ impl fmt::Display for SwapMode {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, bon::Builder)]
 pub struct QuoteConfig {
     pub slippage_bps: Option<u64>,
     pub swap_mode: Option<SwapMode>,
@@ -324,7 +325,8 @@ pub enum PriorityLevel {
     VeryHigh,
 }
 
-#[derive(Debug, Serialize)]
+// #[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, bon::Builder)]
 #[serde(rename_all = "camelCase")]
 #[allow(non_snake_case)]
 pub struct SwapRequest {
