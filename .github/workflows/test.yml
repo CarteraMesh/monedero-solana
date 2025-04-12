@@ -113,7 +113,7 @@ jobs:
         run: cargo build --locked --all-features --all-targets
   coverage:
     runs-on: cartera
-    container: "ghcr.io/actions/runner:ubuntu-latest"
+    container: "ghcr.io/quipper/actions-runner:main"
     name: ubuntu / stable / coverage
     steps:
       - uses: actions/checkout@v4
