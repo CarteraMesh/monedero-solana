@@ -56,13 +56,9 @@ impl JupiterInstructor {
         wrap_and_unwrap_sol: bool,
     ) -> Result<(Vec<Instruction>, Vec<Pubkey>)> {
         let quotes = self.quote(from, to, amount, quote).await?;
-        // let request = SwapRequest::new(self.owner, quotes);
-        let request: SwapRequest = SwapRequest::builder()
-            .quote_response(quotes)
-            .user_public_key(self.owner)
-            .wrap_and_unwrap_sol(wrap_and_unwrap_sol)
-            .prioritization_fee_lamports(PrioritizationFeeLamports::Auto)
-            .build();
+        let mut request = SwapRequest::new(self.owner, quotes);
+        request.wrap_and_unwrap_sol = Some(wrap_and_unwrap_sol);
+        request.prioritization_fee_lamports = PrioritizationFeeLamports::Auto;
         Self::swap_request(request).await
     }
 }
@@ -70,10 +66,7 @@ impl JupiterInstructor {
 #[cfg(test)]
 mod test {
     use {
-        crate::{
-            jup_ag::QuoteConfig, JupiterInstructor, PrioritizationFeeLamports, Quote, SwapMode,
-            SwapRequest,
-        },
+        crate::{jup_ag::QuoteConfig, JupiterInstructor},
         solana_pubkey::Pubkey,
         solana_sdk::native_token::sol_to_lamports,
         spl_token::native_mint::id,
@@ -81,26 +74,6 @@ mod test {
     };
     const USDC: Pubkey = Pubkey::from_str_const("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
 
-    // #[test]
-    // fn swap_request() {
-    //     let quote = Quote::builder()
-    //         .input_mint(USDC)
-    //         .in_amount(1)
-    //         .slippage_bps(0)
-    //         .out_amount(1)
-    //         .output_mint(USDC)
-    //         .route_plan(vec![])
-    //         .price_impact_pct(0.0)
-    //         .other_amount_threshold(1)
-    //         .swap_mode(SwapMode::ExactIn.to_string())
-    //         .build();
-    //     let _ = SwapRequest::builder()
-    //         .quote_response(quote)
-    //         .prioritization_fee_lamports(PrioritizationFeeLamports::Auto)
-    //         .wrap_and_unwrap_sol(true)
-    //         .user_public_key(&TESTNET::OWNER)
-    //         .build();
-    // }
     #[tokio::test]
     async fn swap_wsol() -> anyhow::Result<()> {
         setup();
