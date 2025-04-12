@@ -113,7 +113,7 @@ jobs:
         run: cargo build --locked --all-features --all-targets
   coverage:
     runs-on: cartera
-    #container: "rust:1-bookworm"
+    container: "ghcr.io/actions/runner:ubuntu-latest"
     name: ubuntu / stable / coverage
     steps:
       - uses: actions/checkout@v4
