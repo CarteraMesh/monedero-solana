@@ -17,7 +17,7 @@ name: test
 env:
   RPC_URL: ${{ secrets.RPC_URL }}
   RUST_LOG: "info"
-  RUST_BACKTRACE: "1"
+  RUST_BACKTRACE: "0"
 jobs:
   required:
     runs-on: ubuntu-latest
@@ -149,7 +149,7 @@ jobs:
         if: hashFiles('Cargo.lock') == ''
         run: cargo generate-lockfile
       - name: cargo llvm-cov
-        run: cargo llvm-cov --locked --all-features --lcov --output-path lcov.info --no-fail-fast 
+        run: cargo llvm-cov --locked --all-features --lcov --output-path lcov.info --no-fail-fast  -p monedero-solana --test wrap
       - name: Record Rust version
         run: echo "RUST=$(rustc --version)" >> "$GITHUB_ENV"
       - name: Upload to codecov.io
