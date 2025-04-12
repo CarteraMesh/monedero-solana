@@ -61,18 +61,78 @@ impl JupiterInstructor {
         request.prioritization_fee_lamports = PrioritizationFeeLamports::Auto;
         Self::swap_request(request).await
     }
+
+    pub async fn price(from: &Pubkey, to: &Pubkey, ui_amount: f64) -> Result<Price> {
+        jup_ag::price(*from, *to, ui_amount).await
+    }
 }
 
 #[cfg(test)]
 mod test {
     use {
-        crate::{jup_ag::QuoteConfig, JupiterInstructor},
+        crate::{
+            jup_ag::{self, QuoteConfig},
+            JupiterInstructor,
+            PrioritizationFeeLamports,
+            PriorityLevel,
+            SwapMode,
+            SwapRequest,
+        },
         solana_pubkey::Pubkey,
         solana_sdk::native_token::sol_to_lamports,
         spl_token::native_mint::id,
+        std::str::FromStr,
         test_utils::setup,
     };
     const USDC: Pubkey = Pubkey::from_str_const("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
+
+    #[tokio::test]
+    async fn swap_request_serde() -> anyhow::Result<()> {
+        setup();
+        let jup = JupiterInstructor::new(&test_utils::OWNER);
+        let quote_config = QuoteConfig {
+            slippage_bps: Some(1),
+            ..Default::default()
+        };
+        let quote = jup
+            .quote(&id(), &USDC, sol_to_lamports(1.1), quote_config)
+            .await?;
+        let mut req = SwapRequest::new(test_utils::OWNER, quote);
+        req.prioritization_fee_lamports = PrioritizationFeeLamports::Exact { lamports: 2 };
+        serde_json::to_string(&req)?;
+        req.prioritization_fee_lamports =
+            PrioritizationFeeLamports::AutoMultiplier { multiplier: 1 };
+        serde_json::to_string(&req)?;
+
+        req.prioritization_fee_lamports =
+            PrioritizationFeeLamports::JitoTipLamports { lamports: 100 };
+        serde_json::to_string(&req)?;
+        req.prioritization_fee_lamports = PrioritizationFeeLamports::PriorityLevelWithMaxLamports {
+            priority_level: PriorityLevel::High,
+            max_lamports: 12321,
+        };
+        serde_json::to_string(&req)?;
+
+        let swap_mode: SwapMode = SwapMode::from_str("ExactIn")?;
+        assert_eq!("ExactIn", format!("{swap_mode}"));
+        let swap_mode: SwapMode = SwapMode::from_str("ExactOut")?;
+        assert_eq!("ExactOut", format!("{swap_mode}"));
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn price() -> anyhow::Result<()> {
+        setup();
+        JupiterInstructor::price(&id(), &USDC, 1.1).await?;
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn tokens() -> anyhow::Result<()> {
+        jup_ag::tokens().await?;
+        Ok(())
+    }
 
     #[tokio::test]
     async fn swap_wsol() -> anyhow::Result<()> {
