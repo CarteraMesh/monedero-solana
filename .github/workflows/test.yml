@@ -15,8 +15,8 @@ concurrency:
   cancel-in-progress: true
 name: test
 env:
-  RPC_URL: "https://api.devnet.solana.com"
-  # RPC_URL: ${{ secrets.RPC_URL }}
+  # RPC_URL: "https://api.devnet.solana.com"
+  RPC_URL: ${{ secrets.RPC_URL }}
   RUST_LOG: "info"
   RUST_BACKTRACE: "0"
 jobs:
