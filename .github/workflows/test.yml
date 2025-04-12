@@ -133,7 +133,7 @@ jobs:
     #   https://github.com/codecov/feedback/issues/112
     #
     # for lots of more discussion
-    runs-on: ubuntu-latest
+    runs-on: cartera
     name: ubuntu / stable / coverage
     steps:
       - uses: actions/checkout@v4
