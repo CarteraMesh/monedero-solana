@@ -215,7 +215,7 @@ impl fmt::Display for SwapMode {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, bon::Builder)]
 pub struct QuoteConfig {
     pub slippage_bps: Option<u64>,
     pub swap_mode: Option<SwapMode>,
@@ -390,7 +390,6 @@ struct SwapResponse {
 /// Get swap serialized transactions for a quote
 pub async fn swap(swap_request: SwapRequest) -> Result<Swap> {
     let url = format!("{}/swap", quote_api_url());
-
     let response = maybe_jupiter_api_error::<SwapResponse>(
         reqwest::Client::builder()
             .build()?
@@ -408,7 +407,6 @@ pub async fn swap(swap_request: SwapRequest) -> Result<Swap> {
         bincode::deserialize(&BASE64_STANDARD.decode(base64_transaction)?)
             .map_err(std::convert::Into::into)
     }
-
     Ok(Swap {
         swap_transaction: decode(response.swap_transaction)?,
         last_valid_block_height: response.last_valid_block_height,
@@ -418,20 +416,20 @@ pub async fn swap(swap_request: SwapRequest) -> Result<Swap> {
 /// Get swap serialized transaction instructions for a quote
 pub async fn swap_instructions(swap_request: SwapRequest) -> Result<SwapInstructions> {
     let url = format!("{}/swap-instructions", quote_api_url());
-
+    let body = serde_json::to_string(&swap_request)?;
     let response = reqwest::Client::builder()
         .build()?
         .post(url)
         .header("Accept", "application/json")
-        .json(&swap_request)
+        .header("Content-Type", "application/json")
+        .body(body)
         .send()
         .await?;
-
     if !response.status().is_success() {
         return Err(Error::JupiterApi(response.text().await?));
     }
-
-    Ok(response.json::<SwapInstructions>().await?)
+    let text = response.text().await?;
+    Ok(serde_json::from_str(&text)?)
 }
 
 /// Get a hashmap, which key is the program id and value is the label. This is
