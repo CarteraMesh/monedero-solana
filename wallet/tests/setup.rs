@@ -51,6 +51,7 @@ impl TestConfig {
         Ok(tokens)
     }
 
+    #[allow(dead_code)]
     pub fn explorer(sig: Signature) {
         // ctx.clip
         //    .set_contents(format!("{sig}"))

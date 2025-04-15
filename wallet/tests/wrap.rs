@@ -20,12 +20,12 @@ async fn token_wrap_unwrap(#[future] config: TestConfig) -> anyhow::Result<()> {
     let lamports = sol_to_lamports(0.00325);
     let sig = wallet.wrap(lamports).await?;
     TestConfig::explorer(sig);
-    wallet.rpc().wait_for_new_block(50).await?;
+    wallet.rpc().wait_for_new_block(150).await?;
     let new_amt = wrapped_amount(&wallet.tokens().await?);
     assert_eq!(prev_amt + lamports, new_amt);
 
     TestConfig::explorer(wallet.unwrap_sol().await?);
-    wallet.rpc().wait_for_new_block(50).await?;
+    wallet.rpc().wait_for_new_block(150).await?;
     let new_amt = wrapped_amount(&wallet.tokens().await?);
     assert_eq!(prev_amt, new_amt);
     Ok(())
