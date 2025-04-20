@@ -31,7 +31,7 @@ async fn token_close_burn(#[future] config: TestConfig) -> anyhow::Result<()> {
         .await?;
     TestConfig::explorer(sig);
 
-    wallet.rpc().wait_for_new_block(150).await?;
+    wallet.rpc().wait_for_new_block(254).await?;
     let tokens = wallet.tokens().await?;
     let (legacy, ext) = find_mint(&tokens);
     let sig = wallet.token_burn(&legacy, 11).await?;
@@ -40,7 +40,7 @@ async fn token_close_burn(#[future] config: TestConfig) -> anyhow::Result<()> {
     TestConfig::explorer(sig);
 
     // find new token amounts so we can burn them all
-    wallet.rpc().wait_for_new_block(150).await?;
+    wallet.rpc().wait_for_new_block(254).await?;
     let tokens = wallet.tokens().await?;
     let (legacy, ext) = find_mint(&tokens);
 

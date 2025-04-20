@@ -2,6 +2,7 @@ use {
     monedero_signer_sender::KeypairSender,
     solana_pubkey::Pubkey,
     std::sync::Once,
+    tracing::warn,
     tracing_subscriber::{fmt::format::FmtSpan, EnvFilter},
     wasm_client_solana::SolanaRpcClient,
 };
@@ -25,7 +26,12 @@ pub fn keypair_sender(rpc: Option<SolanaRpcClient>) -> KeypairSender {
 }
 
 pub fn rpc_provider() -> (String, SolanaRpcClient) {
-    let url = std::env::var("RPC_URL").unwrap_or_else(|_| String::from(wasm_client_solana::DEVNET));
+    let mut url =
+        std::env::var("RPC_URL").unwrap_or_else(|_| String::from(wasm_client_solana::DEVNET));
+    if url.is_empty() {
+        warn!("using default solana RPC");
+        url = String::from(wasm_client_solana::DEVNET);
+    }
     let rpc = wasm_client_solana::SolanaRpcClient::new(&url);
     (url, rpc)
 }
