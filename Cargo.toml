@@ -79,7 +79,7 @@ serde_with = { version = "3" }
 strum = { version = "0.27"}
 strum_macros = { version = "0.27" }
 spl-associated-token-account-client = { version = "2.0.0" }
-spl-associated-token-account = {  version = "6"  }
+spl-associated-token-account = {  version = "7"  }
 spl-memo = { version = "6" }
 spl-token = { version = "^7.0" }
 spl-token-2022 = {version = "^7.0" }
